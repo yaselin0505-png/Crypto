@@ -1,0 +1,52 @@
+Feature: Automate WebSocket API 'book.{instrument_name}.{depth}' # features/book_endpoint.feature:1
+
+  @normaltest
+  Scenario: Subscribe to the order book for a specific instrument and depth            # features/book_endpoint.feature:3
+    Given I have the WebSocket root endpoint "wss://stream.crypto.com/v2/market"       # features/steps/book_endpoint_steps.py:6
+    And I want to subscribe to the order book for instrument "BTC_USDT" with depth "5" # features/steps/book_endpoint_steps.py:10
+    When I connect to the WebSocket and send the subscription message                  # features/steps/book_endpoint_steps.py:22
+      Traceback (most recent call last):
+        File "d:\software\crypto\venv\lib\site-packages\behave\model.py", line 1991, in run
+          match.run(runner.context)
+        File "d:\software\crypto\venv\lib\site-packages\behave\matchers.py", line 105, in run
+          self.func(context, *args, **kwargs)
+        File "features\steps\book_endpoint_steps.py", line 25, in step_when_connect_and_subscribe
+          context.websocket_client.connect()
+        File "D:\software\crypto\crypto_api_test\utils\websocket_client.py", line 16, in connect
+          self.ws = websocket.WebSocketApp(
+      AttributeError: module 'websocket' has no attribute 'WebSocketApp'
+
+    Then I should receive the order book data for "BTC_USDT" with depth "5"            # None
+
+  @normaltest
+  Scenario: Receive real-time updates for the subscribed order book                  # features/book_endpoint.feature:9
+    Given I am subscribed to the order book for instrument "BTC_USDT" with depth "5" # features/steps/book_endpoint_steps.py:36
+    When the order book is updated                                                   # features/steps/book_endpoint_steps.py:42
+      Traceback (most recent call last):
+        File "d:\software\crypto\venv\lib\site-packages\behave\model.py", line 1991, in run
+          match.run(runner.context)
+        File "d:\software\crypto\venv\lib\site-packages\behave\matchers.py", line 105, in run
+          self.func(context, *args, **kwargs)
+        File "features\steps\book_endpoint_steps.py", line 46, in step_when_order_book_updated
+          context.updated_response = context.websocket_client.wait_for_update()
+        File "d:\software\crypto\venv\lib\site-packages\behave\runner.py", line 430, in __getattr__
+          raise AttributeError(msg)
+      AttributeError: 'Context' object has no attribute 'websocket_client'
+
+    Then I should receive the updated order book data                                # None
+
+Feature: get the Candlestick Data # features/candlestick_cases.feature:4
+
+  @normaltest1
+  Scenario: get the valid data                     # features/candlestick_cases.feature:6
+    Given I have a valid api                       # None
+    When send the valid request for candlestick    # None
+    Then response is 200                           # None
+    And the response should be included valid data # None
+
+  @normaltest1
+  Scenario: get the invalid data  # features/candlestick_cases.feature:13
+    Given I have a valid api      # None
+    When send an invalid request  # None
+    Then response is not 200      # None
+
